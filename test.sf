@@ -1,2 +1,1 @@
-a: "hello how are you"
-watch(a)
+watch(when mouseClick then "down" else "up")

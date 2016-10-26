@@ -2,6 +2,10 @@
 %lex
 
 %%
+'when'                return 'WHEN';
+'then'                return 'THEN';
+'else'                return 'ELSE';
+
 [0-9]+("."[0-9]+)?\b  return 'NUMBER';
 [a-zA-Z]+             return 'ID';
 ':'                   return 'EQUALS';
@@ -14,6 +18,8 @@
 '/'                   return 'DIVIDE';
 \"[^\"]*\"            return 'STRING';
 
+
+
 \n\s*                 return 'EOL';
 <<EOF>>               return 'EOF';
 [^\S\n]+              /* skip whitespace */
@@ -21,6 +27,7 @@
 
 /lex
 %left ADD MIN
+%left WHEN THEN ELSE
 %left TIMES DIVIDE
 %left E
 
@@ -43,6 +50,8 @@ LINES
 LINE
     : MAPPING
         {$$ = $1;}
+    | WHENSTATEMENT
+        {$$ = $1;}
     | E
         {$$ = $1;}
     ;
@@ -61,6 +70,10 @@ E
         {$$={type: "flow", val: $1}}
     | ID LP LIST RP
         {$$ = {type: "expression", mod: $1, args: $3}}
+    | ID LP RP
+        {$$ = {type: "expression", mod: $1, args: []}}
+    | WHEN E THEN E ELSE E
+        {$$ = {type: "when", expression: $2, then: $4, else: $6}}
     | E ADD E
         {$$ = {type: "expression", mod: "add", args: [$1,$3]}}
     | E MIN E

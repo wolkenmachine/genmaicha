@@ -1,22 +1,30 @@
 var fs = require("fs");
 
-var output = 'var sf = require("./stockflow");\n';
-output += 'var sfstd = require("./stockflowstd");\n';
+var output = "";
+function write(line){
+    output += line + ";\n";
+}
+
+function requires(){
+    write('var sf = require("./stockflow")');
+    write('var sfstd = require("./stockflowstd")');
+}
 
 function generate(ast){
+    //requires();
     ast.map(function(line){
         if(line.type === "assignment"){
-            output += "var "+ line.id + " = sf.flow(" + line.val + ");\n";
+            write( "var "+ line.id + " = sf.flow(" + line.val + ")");
         }
         if(line.type === "mapping"){
-            output += "var "+ line.id + " = "+expression(line.expression)+";\n";
+            write( "var "+ line.id + " = " + expression(line.expression));
         }
         if(line.type === "expression"){
-            output += expression(line)+";\n";
+            write(expression(line));
         }
     });
-    fs.writeFileSync("output.js", output);
-    eval(output);
+    fs.writeFileSync("output/output.js", output);
+    //eval(output);
 }
 
 function expression(e){
@@ -31,8 +39,13 @@ function expression(e){
         if(e.type==="flow"){
             return "sf.flow(" + e.val + ")";
         }
+
+        if(e.type==="when"){
+            return "sf.when("+expression(e.expression)+","+expression(e.then)+","+expression(e.else)+")";
+        }
     }
     return e;
 }
+
 
 module.exports = generate;

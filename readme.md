@@ -7,4 +7,4 @@ Design philosophy
 -----------------
 
 ##### Abstraction over time
-Programming interactive graphics is hard because keeping track of state and propagating change is hard. It more often than not results in spaghetti code. FLO is based on functional reactive programming, meaning that it completely abstracts away all the complicated event handeling noodles for you, and all you are left with is neat declarative wabi-sabi.
+Programming interactive graphics is hard because keeping track of state and propagating change is hard. It more often than not results in spaghetti code. FLO is based on functional reactive programming, meaning that it completely abstracts away all the noodley event handeling for you, and all you are left with is neat declarative wabi-sabi.
