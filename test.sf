@@ -1,3 +1,7 @@
-multandadd: (a,b,c) -> a*b+c
+multandadd: (a,b,c) -> {
+    d:5*c
+    e:a+c*b
+    e*500
+}
 a: multandadd(1,2,3)
 watch(a)

@@ -12,6 +12,8 @@
 ','                   return 'COMMA';
 '('                   return 'LP';
 ')'                   return 'RP';
+'{'                   return 'LC';
+'}'                   return 'RC';
 '->'                  return 'FNC';
 
 /* math */
@@ -42,9 +44,9 @@
 [a-zA-Z]+             return 'ID';
 
 /* whitespace */
-\n\s*                 return 'EOL';
+\r\n                  return 'EOL';
 <<EOF>>               return 'EOF';
-[^\S\n]+              /* skip whitespace */
+\s                    /* skip whitespace */
 
 
 /lex
@@ -72,6 +74,13 @@ LINES
         {$$ = [$1].concat($3);}
     ;
 
+BLOCK
+    : TAB LINE
+        {$$ = [$1];}
+    | TAB LINE EOL BLOCK
+        {$$ = [$3].concat($4);}
+    ;
+
 LINE
     : MAPPING
         {$$ = $1;}
@@ -79,6 +88,8 @@ LINE
         {$$ = $1;}
     | E
         {$$ = $1;}
+    | EOL
+        {}
     ;
 
 MAPPING
@@ -96,7 +107,9 @@ E
     | BOOLEAN
         {$$={type: "flow", val: $1}}
     | LP LIST RP FNC E
-        {$$ = {type: "mapper", args: $2, expression:$5}}
+        {$$ = {type: "mapper", args: $2, expression:[$5]}}
+    | LP LIST RP FNC LC EOL LINES RC
+        {$$ = {type: "mapper", args: $2, expression:$7}}
     | ID LP LIST RP
         {$$ = {type: "expression", mod: $1, args: $3}}
     | ID LP RP
@@ -131,13 +144,8 @@ BOOLEAN
     ;
 
 LIST
-    : LISTELEM
-        {$$ = [$1];}
-    | LISTELEM COMMA LIST
-        {$$ = [$1].concat($3);}
-    ;
-
-LISTELEM
     : E
-        {$$ = $1;}
+        {$$ = [$1];}
+    | E COMMA LIST
+        {$$ = [$1].concat($3);}
     ;

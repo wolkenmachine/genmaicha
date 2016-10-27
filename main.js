@@ -9,6 +9,6 @@ var parser = new jison.Parser(bnf);
 var input = fs.readFileSync("test.sf", "utf8");
 
 var ast = parser.parse(input);
-console.log(ast);
+console.log(JSON.stringify(ast, null, 4));
 generate(ast);
 //module.exports = parser;

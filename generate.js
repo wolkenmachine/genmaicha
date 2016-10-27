@@ -12,16 +12,19 @@ function requires(){
 
 function generate(ast){
     //requires();
-    ast.map(function(line){
-        if(line.type === "mapping"){
-            write( "var "+ line.id + " = " + expression(line.expression));
-        }
-        if(line.type === "expression"){
-            write(expression(line));
-        }
+    ast.map(function(l){
+        write(line(l));
     });
     fs.writeFileSync("output/output.js", output);
     //eval(output);
+}
+
+function line(l){
+    if(l.type === "mapping"){
+        return "var "+ l.id + " = " + expression(l.expression);
+    } else {
+        return expression(l);
+    }
 }
 
 function expression(e){
@@ -47,7 +50,12 @@ function expression(e){
         if(e.type==="mapper"){
             return "function($){"+e.args.map(function(e,c){
                 return "var "+e+"=$["+c+"];";
-            }).join("")+"return "+expression(e.expression)+";}";
+            }).join("")+e.expression.map(function(a,c){
+                if(c===e.expression.length-1){
+                    return "return "+line(a)+";";
+                }
+                return line(a)+";";
+            }).join("")+"}";
         }
 
         if(e.type==="when"){
