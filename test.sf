@@ -1,1 +1,3 @@
-watch(when mouseClick then "down" else "up")
+multandadd: (a,b,c) -> a*b+c
+a: multandadd(5, mouseX, mouseY)
+watch(a)

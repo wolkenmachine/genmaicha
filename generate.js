@@ -13,9 +13,6 @@ function requires(){
 function generate(ast){
     //requires();
     ast.map(function(line){
-        if(line.type === "assignment"){
-            write( "var "+ line.id + " = sf.flow(" + line.val + ")");
-        }
         if(line.type === "mapping"){
             write( "var "+ line.id + " = " + expression(line.expression));
         }
@@ -33,11 +30,24 @@ function expression(e){
             var args = e.args.map(function(a){
                 return expression(a);
             });
+            return e.mod+"(["+args+"])";
+        }
+
+        if (e.type==="stdexpression"){
+            var args = e.args.map(function(a){
+                return expression(a);
+            });
             return "sfstd."+e.mod+"(["+args+"])";
         }
 
         if(e.type==="flow"){
             return "sf.flow(" + e.val + ")";
+        }
+
+        if(e.type==="mapper"){
+            return "function($){"+e.args.map(function(e,c){
+                return "var "+e+"=$["+c+"];";
+            }).join("")+"return "+expression(e.expression)+";}";
         }
 
         if(e.type==="when"){
