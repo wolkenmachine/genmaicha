@@ -1,6 +1,13 @@
 /* lexical grammar */
-%lex
 
+
+
+%lex
+%{
+	if(!yy.indentstack){
+		yy.indentstack = [0];
+	}
+%}
 %%
 /* control logic */
 'when'                return 'WHEN';
@@ -44,19 +51,44 @@
 [a-zA-Z]+             return 'ID';
 
 /* whitespace */
-\r\n                  return 'EOL';
-<<EOF>>               return 'EOF';
-\s                    /* skip whitespace */
+(\r\n|\r|\n)+[ \t]*/!(\r\n|\r|\n)
+(\r\n|\r|\n)+[ \t]*		%{
+							var current = yy.indentstack[0]; //get the current indentation level
+							yytext = yytext.replace(/^(\r\n|\r|\n)+/, ''); //remove line break characters
+							var indent = yytext.length; //count amount of indents
 
+							var tokens = ['EOL'];
+							if(indent > current){
+								yy.indentstack.unshift(indent);
+								tokens.unshift('INDENT');
+								return tokens;
+							}
+							if(indent < current){
+								while(indent < current){
+									tokens.unshift('DEDENT');
+									tokens.unshift('EOL');
+
+									yy.indentstack.shift();
+									current = yy.indentstack[0];
+								}
+
+								return tokens;
+							}
+							return 'EOL';
+					%}
+<<EOF>>               return 'EOF';
+\s+ 	              /*ignore all other whitespace*/
 
 /lex
+
+%options token-stack
+
 %left FNC
 %left ADD MIN
 %left TIMES DIVIDE
 
 %left IS ISNT LARGER SMALLER LARGERORIS SMALLERORIS
 %left WHEN THEN ELSE
-
 
 %start PROGRAM
 
@@ -75,10 +107,8 @@ LINES
     ;
 
 BLOCK
-    : TAB LINE
-        {$$ = [$1];}
-    | TAB LINE EOL BLOCK
-        {$$ = [$3].concat($4);}
+    : INDENT LINES DEDENT
+        {$$ = $2;}
     ;
 
 LINE
@@ -108,8 +138,8 @@ E
         {$$={type: "flow", val: $1}}
     | LP LIST RP FNC E
         {$$ = {type: "mapper", args: $2, expression:[$5]}}
-    | LP LIST RP FNC LC EOL LINES RC
-        {$$ = {type: "mapper", args: $2, expression:$7}}
+    | LP LIST RP FNC EOL BLOCK
+        {$$ = {type: "mapper", args: $2, expression:$6}}
     | ID LP LIST RP
         {$$ = {type: "expression", mod: $1, args: $3}}
     | ID LP RP

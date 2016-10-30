@@ -29,6 +29,14 @@ multiplyAndAdd: (a,b,c) -> a*b+c
 multiplyAndAdd(1, 2, 3) //five
 multiplyAndAdd(3, 2, 1) //seven
 ```
+Multiline functions are defined by using indentation. The last line is the implied return.
+```
+multiplyAndAdd: (a,b,c) ->
+	d:a*b
+	d+c
+
+multiplyAndAdd(1, 2, 3) //five
+```
 
 ##### When statements
 *when* is FLO's version of *if*. You can assign variables based on conditionals

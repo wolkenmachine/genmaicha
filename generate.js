@@ -48,13 +48,13 @@ function expression(e){
         }
 
         if(e.type==="mapper"){
-            return "function($){"+e.args.map(function(e,c){
+            return "function($){\n"+e.args.map(function(e,c){
                 return "var "+e+"=$["+c+"];";
             }).join("")+e.expression.map(function(a,c){
                 if(c===e.expression.length-1){
-                    return "return "+line(a)+";";
+                    return "return "+line(a)+";\n";
                 }
-                return line(a)+";";
+                return line(a)+";\n";
             }).join("")+"}";
         }
 
