@@ -5,7 +5,7 @@ It is a single language that compiles down to HTML CSS and JAVASCRIPT.
 
 Example
 -------
-##### Variables & Mappings
+#### Variables & Mappings
 
 ```
 a: 5
@@ -22,7 +22,7 @@ You can only define a variable once. This is because you are defining a variable
 doubleX: mouseX * 2 //whenever the user moves the mouse, doubleX will update automatically
 ```
 
-##### Functions
+#### Functions
 Functions take an argument list and define an abstracted mapping that can be used multiple times
 ```
 multiplyAndAdd: (a,b,c) -> a*b+c
@@ -38,7 +38,7 @@ multiplyAndAdd: (a,b,c) ->
 multiplyAndAdd(1, 2, 3) //five
 ```
 
-##### When statements
+#### When statements
 *when* is FLO's version of *if*. You can assign variables based on conditionals
 ```
 name: when id==5 then "foo" else "bar"
@@ -47,5 +47,5 @@ name: when id==5 then "foo" else "bar"
 Design philosophy
 -----------------
 
-##### Abstraction over time
+#### Abstraction over time
 Programming interactive graphics is hard because keeping track of state and propagating change is hard. It more often than not results in spaghetti code. FLO is based on functional reactive programming, meaning that it completely abstracts away all the noodley event handeling for you, and all you are left with is neat declarative wabi-sabi.

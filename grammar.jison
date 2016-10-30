@@ -3,11 +3,13 @@
 
 
 %lex
-%{
-	if(!yy.indentstack){
-		yy.indentstack = [0];
-	}
-%}
+
+	%{
+		if(!yy.indentstack){
+			yy.indentstack = [0];
+		}
+	%}
+
 %%
 /* control logic */
 'when'                return 'WHEN';
@@ -19,8 +21,6 @@
 ','                   return 'COMMA';
 '('                   return 'LP';
 ')'                   return 'RP';
-'{'                   return 'LC';
-'}'                   return 'RC';
 '->'                  return 'FNC';
 
 /* math */
@@ -51,8 +51,8 @@
 [a-zA-Z]+             return 'ID';
 
 /* whitespace */
-(\r\n|\r|\n)+[ \t]*/!(\r\n|\r|\n)
-(\r\n|\r|\n)+[ \t]*		%{
+(\r\n|\r|\n)[ \t]*(?=(\r\n|\r|\n)) /* consume empty lines */
+(\r\n|\r|\n)[ \t]*	%{ /* deal with indentation */
 							var current = yy.indentstack[0]; //get the current indentation level
 							yytext = yytext.replace(/^(\r\n|\r|\n)+/, ''); //remove line break characters
 							var indent = yytext.length; //count amount of indents
@@ -76,6 +76,7 @@
 							}
 							return 'EOL';
 					%}
+
 <<EOF>>               return 'EOF';
 \s+ 	              /*ignore all other whitespace*/
 
@@ -146,6 +147,8 @@ E
         {$$ = {type: "expression", mod: $1, args: []}}
     | WHEN E THEN E ELSE E
         {$$ = {type: "when", expression: $2, then: $4, else: $6}}
+/*	| LP E RP
+		{$$ = $2}*/
     | E ADD E
         {$$ = {type: "stdexpression", mod: "add", args: [$1,$3]}}
     | E MIN E
