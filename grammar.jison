@@ -15,13 +15,18 @@
 'when'                return 'WHEN';
 'then'                return 'THEN';
 'else'                return 'ELSE';
+'unfold'              return 'UNFOLD';
+'as'                  return 'AS';
 
 /* operators */
 ':'                   return 'SET';
 ','                   return 'COMMA';
 '('                   return 'LP';
 ')'                   return 'RP';
+'['                   return 'LBR';
+']'                   return 'RBR';
 '->'                  return 'FNC';
+'#'                   return 'UNFOLDER';
 
 /* math */
 '+'                   return 'ADD';
@@ -85,11 +90,15 @@
 %options token-stack
 %ebnf
 
+%right UNFOLDER
 %left FNC
+%left UNFOLD AS
 %left ADD MIN
 %left TIMES DIVIDE
 %left IS ISNT LARGER SMALLER LARGERORIS SMALLERORIS
 %left WHEN THEN ELSE
+
+
 
 %start PROGRAM
 
@@ -130,25 +139,23 @@ MAPPING
 
 E
     : ID
-        {$$=$1}
+        {$$={type: "id", val: $1}}
     | NUMBER
         {$$={type: "flow", val: $1}}
     | STRING
         {$$={type: "flow", val: $1}}
     | BOOLEAN
         {$$={type: "flow", val: $1}}
-    | LP LIST RP FNC E
+    | LP ARGUMENTLIST RP FNC E
         {$$ = {type: "mapper", args: $2, expression:[$5]}}
-    | LP LIST RP FNC EOL BLOCK
-        {$$ = {type: "mapper", args: $2, expression:$6}}
     | ID LP LIST RP
         {$$ = {type: "expression", mod: $1, args: $3}}
     | ID LP RP
         {$$ = {type: "expression", mod: $1, args: []}}
-    | WHEN E THEN E ELSE E
-        {$$ = {type: "when", expression: $2, then: $4, else: $6}}
-	| LP E RP
-		{$$ = $2}
+    | WHEN E SET E ELSE SET E
+        {$$ = {type: "when", expression: $2, then: $4, else: $7}}
+	| WHEN E SET E EOL ELSE SET E
+        {$$ = {type: "when", expression: $2, then: $4, else: $8}}
     | E ADD E
         {$$ = {type: "stdexpression", mod: "add", args: [$1,$3]}}
     | E MIN E
@@ -167,6 +174,12 @@ E
         {$$ = {type: "stdexpression", mod: "smalleroris", args: [$1,$3]}}
     | E SMALLERORIS E
         {$$ = {type: "stdexpression", mod: "largeroris", args: [$1,$3]}}
+	| LBR LIST RBR
+		{$$ = {type: "array", val:$2 }}
+	| UNFOLD ID AS ID SET E
+		{$$ = {type: "unfold", array:$2, id:$4, expression: $6}}
+	| EOL BLOCK
+		{$$ = {type: "block", array:$2}}
     ;
 
 BOOLEAN
@@ -175,6 +188,13 @@ BOOLEAN
     | FALSE
         {$$ = false}
     ;
+
+ARGUMENTLIST
+	: ID
+		{$$ = [$1];}
+	| ID COMMA ARGUMENTLIST
+		{$$ = [$1].concat($3);}
+	;
 
 LIST
     : E

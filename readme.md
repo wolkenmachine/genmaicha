@@ -39,13 +39,30 @@ multiplyAndAdd(1, 2, 3) //five
 ```
 
 #### When statements
-*when* is Genmaicha's version of *if*. You can assign variables based on conditionals
+*when* is Genmaicha's version of *if*. You can assign variables based on conditionals.
 ```
-name: when id==5 then "foo" else "bar"
+name: when id==5: "foo" else: "bar"
+```
+
+#### Arrays
+An array is defined with square brackets. They can contain any kind of variable.
+```
+list: [1,"john",false]
+matrix: [[1,2],[3,4]]
+```
+Arrays can be *unfolded*. Which means that the array gets sequentialized over time, and can be treated just as any other variable.
+```
+list: [1,2,3]
+newlist: unfold list as element: element * 5   //[5,10,15]
 ```
 
 Design philosophy
 -----------------
 
 #### Abstraction over time
-Programming interactive graphics is hard because keeping track of state and propagating change is hard. It more often than not results in spaghetti code. Genmaicha is based on functional reactive programming, meaning that it completely abstracts away all the noodley event handeling for you, and all you are left with is neat declarative wabi-sabi.
+Programming interactive graphics is hard because keeping track of state and propagating change is hard. Genmaicha completely abstracts away all the noodley event handeling for you, and all you are left with is neat declarative wabi-sabi.
+
+TODO
+-----------------
+* recursive state
+* dealing with parenthesized expresssions (that don't conflict with lists)

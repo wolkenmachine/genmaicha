@@ -29,6 +29,14 @@ function line(l){
 
 function expression(e){
     if(e.type){
+		if (e.type==="id"){
+            return e.val;
+        }
+		if(e.type ==="array"){
+			return "sf.flow(["+e.val.map(function(a){
+				return expression(a);
+			})+"])";
+		}
         if (e.type==="expression"){
             var args = e.args.map(function(a){
                 return expression(a);
@@ -61,7 +69,12 @@ function expression(e){
         if(e.type==="when"){
             return "sf.when("+expression(e.expression)+","+expression(e.then)+","+expression(e.else)+")";
         }
+
+		if(e.type==="unfold"){
+			return "sf.unfold("+e.array+",function("+e.id+"){return "+expression(e.expression)+"})";
+		}
     }
+
     return e;
 }
 

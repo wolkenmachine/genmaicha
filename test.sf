@@ -1,5 +1,4 @@
-multandadd: (a,b,c) ->
-	a*(b+c)
+func: (a,b,c) -> a*b*c
 
-a:multandadd(1,2,3)
-watch(a)
+val: when mouseX>500: true else: false
+watch(val)
