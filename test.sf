@@ -1,5 +1,5 @@
 multandadd: (a,b,c) ->
-	d:a*b
-	d+c
+	a*(b+c)
+
 a:multandadd(1,2,3)
 watch(a)

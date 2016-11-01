@@ -83,11 +83,11 @@
 /lex
 
 %options token-stack
+%ebnf
 
 %left FNC
 %left ADD MIN
 %left TIMES DIVIDE
-
 %left IS ISNT LARGER SMALLER LARGERORIS SMALLERORIS
 %left WHEN THEN ELSE
 
@@ -147,8 +147,8 @@ E
         {$$ = {type: "expression", mod: $1, args: []}}
     | WHEN E THEN E ELSE E
         {$$ = {type: "when", expression: $2, then: $4, else: $6}}
-/*	| LP E RP
-		{$$ = $2}*/
+	| LP E RP
+		{$$ = $2}
     | E ADD E
         {$$ = {type: "stdexpression", mod: "add", args: [$1,$3]}}
     | E MIN E

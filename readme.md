@@ -1,10 +1,10 @@
-#FLO
-FLO is a language for graphic design, it stands for Fluid Layout Language.
+#Genmaicha
+Genmaicha is a language for graphic design.
 You can use it to lay out documents and create reactive interfaces for the web.
 It is a single language that compiles down to HTML CSS and JAVASCRIPT.
 
-Example
--------
+Examples
+--------
 #### Variables & Mappings
 
 ```
@@ -39,7 +39,7 @@ multiplyAndAdd(1, 2, 3) //five
 ```
 
 #### When statements
-*when* is FLO's version of *if*. You can assign variables based on conditionals
+*when* is Genmaicha's version of *if*. You can assign variables based on conditionals
 ```
 name: when id==5 then "foo" else "bar"
 ```
@@ -48,4 +48,4 @@ Design philosophy
 -----------------
 
 #### Abstraction over time
-Programming interactive graphics is hard because keeping track of state and propagating change is hard. It more often than not results in spaghetti code. FLO is based on functional reactive programming, meaning that it completely abstracts away all the noodley event handeling for you, and all you are left with is neat declarative wabi-sabi.
+Programming interactive graphics is hard because keeping track of state and propagating change is hard. It more often than not results in spaghetti code. Genmaicha is based on functional reactive programming, meaning that it completely abstracts away all the noodley event handeling for you, and all you are left with is neat declarative wabi-sabi.
